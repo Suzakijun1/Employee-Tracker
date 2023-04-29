@@ -7,7 +7,7 @@ init();
 
 //Display logo text, load main prompts
 function init() {
-  const logoText = logo({ name: "Employee Manger" }).render();
+  const logoText = logo({ name: "Employee Manager" }).render();
 
   console.log(logoText);
 
@@ -36,6 +36,14 @@ function LoadMainPrompts() {
         {
           name: "Add Employee",
           value: "ADD_EMPLOYEE",
+        },
+        {
+          name: "Add A Role",
+          value: "ADD_A_Role",
+        },
+        {
+          name: "Update An Employee",
+          value: "UPDATE_AN_EMPLOYEE",
         },
       ],
     },
