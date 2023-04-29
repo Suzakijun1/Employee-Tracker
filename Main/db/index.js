@@ -11,6 +11,32 @@ class DB {
   findAllEmployees() {
     return this.connection.promise().query(`SELECT * FROM employee`);
   }
+
+  findAllDepartments() {
+    return this.connection.promise().query(`SELECT * FROM department`);
+  }
+
+  findAllRoles() {
+    return this.connection.promise().query(`SELECT * FROM role`);
+  }
+  addDepartment(department) {
+    return this.connection
+      .promise()
+      .query(`INSERT INTO department SET ?`, department);
+  }
+  addEmployee(employee) {
+    return this.connection
+      .promise()
+      .query(`INSERT INTO employee SET ?`, [employee]);
+  }
+  async getRoles() {
+    return this.connection.promise().query(`SELECT * FROM role`);
+  }
+  getManager() {
+    return this.connection
+      .promise()
+      .query(`SELECT first_name, last_name, manager_id FROM employee`);
+  }
 }
 
 module.exports = new DB(connection);
