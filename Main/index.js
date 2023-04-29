@@ -1,4 +1,4 @@
-const { prompt } = require("inquirer");
+const { prompt, default: inquirer } = require("inquirer");
 const logo = require("asciiart-logo");
 const db = require("./db");
 require("console.table");
@@ -14,7 +14,7 @@ function init() {
   loadMainPrompts();
 }
 
-function LoadMainPrompts() {
+function loadMainPrompts() {
   prompt([
     {
       type: "list",
@@ -26,20 +26,24 @@ function LoadMainPrompts() {
           value: "VIEW_EMPLOYEES",
         },
         {
-          name: "View All Employees by Department",
-          value: "VIEW_EMPLOYEES_BY_DEPARTMENT",
+          name: "View All Departments",
+          value: "VIEW_ALL_DEPARTMENTS",
         },
         {
-          name: "View All Employees by Manager",
-          value: "VIEW_EMPLOYEES_BY_MANAGER",
+          name: "View All Roles",
+          value: "VIEW_All_ROLES",
         },
         {
-          name: "Add Employee",
-          value: "ADD_EMPLOYEE",
+          name: "Add An Employee",
+          value: "ADD_AN_EMPLOYEE",
         },
         {
           name: "Add A Role",
           value: "ADD_A_Role",
+        },
+        {
+          name: "Add An Department",
+          value: "ADD_AN_DEPARTMENT",
         },
         {
           name: "Update An Employee",
@@ -47,5 +51,17 @@ function LoadMainPrompts() {
         },
       ],
     },
-  ]);
+  ]).then((response) => {
+    switch (response.choice) {
+      case "VIEW_EMPLOYEES":
+        viewEmployees();
+        break;
+    }
+  });
+}
+
+function viewEmployees() {
+  db.findAllEmployees().then(function ([allEmployees]) {
+    console.table(allEmployees);
+  });
 }
