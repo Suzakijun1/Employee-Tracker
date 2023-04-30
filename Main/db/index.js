@@ -30,7 +30,9 @@ class DB {
       .query(`INSERT INTO employee SET ?`, [employee]);
   }
   async getRoles() {
-    return this.connection.promise().query(`SELECT * FROM role`);
+    return this.connection
+      .promise()
+      .query(`SELECT id, title AS 'role' FROM role`);
   }
   getManager() {
     return this.connection
