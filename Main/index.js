@@ -1,7 +1,9 @@
 const { prompt } = require("inquirer");
+const inquirer = require("inquirer");
 const logo = require("asciiart-logo");
 const db = require("./db");
 require("console.table");
+const connection = require("./db/connection");
 
 init();
 
@@ -118,49 +120,73 @@ function addDepartment() {
       loadMainPrompts();
     });
 }
+//select role for add employee prompt
+var roleArr = [];
+function selectRole() {
+  connection.query("SELECT * FROM role", function (err, res) {
+    if (err) throw err;
+    for (var i = 0; i < res.length; i++) {
+      roleArr.push(res[i].title);
+    }
+  });
+  return roleArr;
+}
+// manager for add employee prompt
+var managersArr = [];
+function selectManager() {
+  connection.query(
+    "SELECT first_name, last_name FROM employee WHERE manager_id IS NULL",
+    function (err, res) {
+      if (err) throw err;
+      for (var i = 0; i < res.length; i++) {
+        managersArr.push(res[i].first_name);
+      }
+    }
+  );
+  return managersArr;
+}
+function addEmployee() {
+  inquirer
+    .prompt([
+      {
+        name: "firstName",
+        type: "input",
+        message: "What is the first name of the employee?",
+      },
+      {
+        name: "lastName",
+        type: "input",
+        message: "What is the last name of the employee?",
+      },
 
-async function addEmployee() {
-  let roles = await db.getRoles();
-  let roleChoices = roles.map((role) => ({
-    name: role.title,
-    value: role.id,
-  }));
-
-  const manager = await db.getManager();
-  const managerChoices = manager.map((manager) => ({
-    firstName: manager.first_name,
-    lastName: manager.last_name,
-    value: manager.manager_id,
-  }));
-  await prompt([
-    {
-      name: "firstName",
-      type: "input",
-      message: "What is the first name of the employee?",
-    },
-    {
-      name: "lastName",
-      type: "input",
-      message: "What is the last name of the employee?",
-    },
-
-    {
-      name: "roleId",
-      type: "list",
-      message: "What is the employee's role?",
-      choices: roleChoices,
-    },
-    {
-      name: "managerId",
-      type: "list",
-      message: "What is the employee's role?",
-      choices: managerChoices,
-    },
-  ])
-    .then(function (answer) {
-      db.addEmployee(answer);
-    })
-    .then(function () {
-      console.log("Employee added successfully!");
-    });
+      {
+        name: "roleId",
+        type: "list",
+        message: "What is the employee's role?",
+        choices: selectRole(),
+      },
+      {
+        name: "managerId",
+        type: "list",
+        message: "What is the employee's role?",
+        choices: selectManager(),
+      },
+    ])
+    .then(
+      function (answer) {
+        var roleId = selectRole().indexOf(answer.roleId) + 1;
+        var managerId = selectManager().indexOf(answer.managerId) + 1;
+        connection.query(`INSERT INTO employee SET ?`, {
+          first_name: answer.firstName,
+          last_name: answer.lastName,
+          role_id: roleId,
+          manager_id: managerId,
+        });
+      },
+      function (err, res) {
+        if (err) throw err;
+        console.log("Success!");
+        loadMainPrompts();
+      }
+    );
 }

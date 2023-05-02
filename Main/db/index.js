@@ -25,19 +25,12 @@ class DB {
       .query(`INSERT INTO department SET ?`, department);
   }
   addEmployee(employee) {
-    return this.connection
-      .promise()
-      .query(`INSERT INTO employee SET ?`, [employee]);
-  }
-  async getRoles() {
-    return this.connection
-      .promise()
-      .query(`SELECT id, title AS 'role' FROM role`);
-  }
-  getManager() {
-    return this.connection
-      .promise()
-      .query(`SELECT first_name, last_name, manager_id FROM employee`);
+    return this.connection.promise().query(`INSERT INTO employee SET ?`, {
+      first_name: answer.firstName,
+      last_name: answer.lastName,
+      manager_id: mangerId,
+      role_id: roleId,
+    });
   }
 }
 
